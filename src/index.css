@@ -1,0 +1,1166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* GitHub-inspired colors with purple accent */
+    --background: 220 15% 8%;
+    --foreground: 210 20% 85%;
+
+    --card: 220 15% 11%;
+    --card-foreground: 210 20% 85%;
+
+    --popover: 220 15% 11%;
+    --popover-foreground: 210 20% 85%;
+
+    --primary: 263 70% 60%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 15% 14%;
+    --secondary-foreground: 210 20% 85%;
+
+    --muted: 220 15% 14%;
+    --muted-foreground: 215 15% 55%;
+
+    --accent: 263 70% 60%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 263 70% 60%;
+
+    --radius: 0.375rem;
+
+    /* GitHub-style colors */
+    --github-gray-0: 220 15% 11%;
+    --github-gray-1: 220 15% 14%;
+    --github-gray-2: 220 15% 18%;
+    --github-gray-3: 220 15% 25%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(263 70% 60%), hsl(243 70% 60%));
+    --gradient-card: linear-gradient(180deg, hsl(220 15% 12%), hsl(220 15% 10%));
+    --shadow-glow: 0 0 40px hsl(263 70% 60% / 0.15);
+    --shadow-elevated: 0 10px 40px -10px hsl(220 15% 4% / 0.5);
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* GitHub-style typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  
+  code, pre {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+  
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+  
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  /* Mobile touch optimization */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Touch target helpers */
+  .touch-target {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .touch-target-lg {
+    min-height: 52px;
+    min-width: 52px;
+  }
+
+  /* Safe area support for notched devices */
+  .pb-safe {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+  
+  .pt-safe {
+    padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+  }
+  
+  .px-safe {
+    padding-left: calc(1rem + env(safe-area-inset-left, 0px));
+    padding-right: calc(1rem + env(safe-area-inset-right, 0px));
+  }
+
+  /* iOS safe area body support */
+  @supports (padding: max(0px)) {
+    body {
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+  }
+
+  /* Safe area bottom for bottom navigation */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Scrollbar styles for breadcrumbs */
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 2px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+  
+  /* Toast/Notification z-index - Above Lovable Badge */
+  [data-sonner-toaster],
+  [data-radix-toast-viewport] {
+    z-index: 999999 !important;
+  }
+  
+  /* Mobile File Browser Optimizations */
+  @media (max-width: 767px) {
+    /* Ensure file browser and repository manager are truly full-width */
+    main, main > div, .file-browser-container {
+      max-width: 100vw !important;
+      width: 100% !important;
+    }
+    
+    /* Make three-dot menu more tappable on mobile */
+    .file-browser-item button[title="More actions"] {
+      opacity: 1 !important;
+      height: 44px !important;
+      width: 44px !important;
+      min-width: 44px !important;
+    }
+    
+    .file-browser-item button[title="More actions"] svg {
+      height: 20px !important;
+      width: 20px !important;
+    }
+    
+    /* File Editor Modal - Full screen on mobile */
+    .file-editor-modal {
+      position: fixed !important;
+      inset: 0 !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      max-width: 100vw !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      transform: translate(0, 0) !important;
+      padding: 1rem !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .file-editor-modal > div:nth-child(2) {
+      flex: 1 !important;
+      overflow-y: auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .code-editor-container {
+      flex: 1 !important;
+      min-height: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .code-editor-container > div {
+      flex: 1 !important;
+      min-height: 0 !important;
+    }
+    
+    .code-editor-container textarea {
+      min-height: 100% !important;
+      height: 100% !important;
+    }
+    
+    /* File Viewer Modal - Horizontal scroll for code */
+    pre {
+      overflow-x: auto !important;
+      max-width: 100% !important;
+      white-space: pre !important;
+    }
+    
+    pre code {
+      display: inline-block !important;
+      min-width: 100% !important;
+    }
+    
+    /* Ensure drawer has proper z-index above other modals */
+    [data-vaul-drawer] {
+      z-index: 100000 !important;
+    }
+    
+    [data-vaul-drawer-wrapper] {
+      z-index: 100000 !important;
+    }
+    
+    /* Ensure dialog/modal overlays don't conflict with drawer */
+    [data-radix-dialog-overlay] {
+      z-index: 99998 !important;
+    }
+    
+    [data-radix-dialog-content] {
+      z-index: 99999 !important;
+    }
+  }
+  
+  /* Built with Lovable Badge - Bottom Right, Non-overlapping */
+  #lovable-badge,
+  [id*="lovable"],
+  a[href*="lovable.dev"] {
+    position: fixed !important;
+    bottom: 8px !important;
+    right: 8px !important;
+    z-index: 50 !important;
+  }
+}
+
+/* Mobile Responsive Styles (< 768px) */
+@media (max-width: 767px) {
+  /* Global Layout - Single Column */
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  /* Header - Native Mobile Feel - Fixed Logo & Menu Overlap */
+  header {
+    height: 60px !important;
+    padding: 0.75rem 1rem !important;
+    border-bottom: 1px solid hsl(var(--border)) !important;
+    background: hsl(var(--card)) !important;
+    backdrop-filter: blur(10px);
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    position: relative !important;
+    z-index: 40 !important;
+  }
+  
+  /* Logo/Brand - Left Side, No Overlap */
+  header > div:first-child {
+    flex: 0 0 auto !important;
+    margin-right: auto !important;
+  }
+  
+  /* Logo/Brand - Better Mobile Sizing */
+  header h1 {
+    font-size: 1.125rem !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+  }
+  
+  header .h-6.w-6 {
+    height: 1.375rem !important;
+    width: 1.375rem !important;
+  }
+  
+  /* Header Navigation - Ensure proper spacing */
+  header > div {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  /* Hamburger Menu Button - Enhanced Native Feel */
+  [data-slot="trigger"] button,
+  button[aria-haspopup="dialog"] {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 0.625rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.625rem !important;
+    background: hsl(var(--secondary)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px hsl(220 15% 4% / 0.1);
+  }
+  
+  button[aria-haspopup="dialog"]:hover {
+    background: hsl(var(--secondary) / 0.8) !important;
+    border-color: hsl(var(--primary) / 0.3) !important;
+  }
+  
+  button[aria-haspopup="dialog"]:active {
+    background: hsl(var(--primary) / 0.1) !important;
+    border-color: hsl(var(--primary)) !important;
+    transform: scale(0.95);
+  }
+  
+  /* Hamburger Icon Lines */
+  button[aria-haspopup="dialog"] svg {
+    width: 20px !important;
+    height: 20px !important;
+    stroke-width: 2.5px;
+  }
+  
+  /* Mobile Sheet/Drawer Navigation */
+  [data-vaul-drawer] {
+    border-top-left-radius: 1rem !important;
+    border-top-right-radius: 1rem !important;
+  }
+  
+  /* Sheet Content - Native Mobile Navigation */
+  [role="dialog"][data-vaul-drawer] nav,
+  [role="dialog"] nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+  
+  [role="dialog"] nav button {
+    width: 100%;
+    justify-content: flex-start;
+    font-size: 1.0625rem;
+    padding: 1rem !important;
+    min-height: 56px !important;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  [role="dialog"] nav button:active {
+    transform: scale(0.98);
+    background: hsl(var(--secondary));
+  }
+
+  /* Cards and Content - Native Mobile Feel */
+  [class*="max-w-"] {
+    max-width: 100% !important;
+  }
+  
+  /* Card - Better Mobile Styling with Ample Spacing */
+  [class*="Card"] {
+    margin: 0 !important;
+    border-radius: 1rem;
+    border-width: 1px;
+    box-shadow: 0 2px 8px hsl(220 15% 4% / 0.1);
+  }
+  
+  [class*="CardContent"] {
+    padding: 1.5rem !important;
+    padding-bottom: 1.75rem !important;
+  }
+  
+  [class*="CardHeader"] {
+    padding: 1.5rem !important;
+    padding-bottom: 1rem !important;
+  }
+  
+  [class*="CardTitle"] {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  
+  [class*="CardDescription"] {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    margin-top: 0.5rem;
+  }
+
+  /* Grid Layouts - Single Column */
+  [class*="grid-cols-2"],
+  [class*="grid-cols-3"],
+  [class*="md:grid-cols-"] {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+
+  /* Buttons - Native Mobile Feel */
+  button:not(.md\:hidden button):not([class*="icon"]):not([data-state]) {
+    width: 100%;
+    min-height: 52px;
+    font-size: 1.0625rem;
+    padding: 0.875rem 1.25rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+  }
+  
+  button:active {
+    transform: scale(0.98);
+  }
+  
+  /* Primary Buttons - Enhanced */
+  button[class*="bg-primary"],
+  button[variant="default"] {
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.25);
+  }
+  
+  button[class*="bg-primary"]:active {
+    box-shadow: 0 2px 6px hsl(var(--primary) / 0.3);
+  }
+  
+  /* Navigation Buttons - Fixed Bottom Bar for Wizard */
+  .wizard-footer {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    padding: 0.875rem 1rem !important;
+    padding-bottom: calc(0.875rem + env(safe-area-inset-bottom)) !important;
+    background: hsl(var(--background) / 0.95) !important;
+    backdrop-filter: blur(12px) !important;
+    border-top: 1px solid hsl(var(--border)) !important;
+    box-shadow: 0 -4px 16px hsl(220 15% 4% / 0.1) !important;
+    z-index: 50 !important;
+    display: flex !important;
+    gap: 0.75rem !important;
+    margin: 0 !important;
+  }
+  
+  /* Add padding to wizard content to prevent overlap with sticky footer */
+  .wizard-footer ~ * {
+    padding-bottom: 80px !important;
+  }
+  
+  .wizard-footer > button {
+    width: auto !important;
+    flex: 1;
+    min-height: 52px !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 2px 8px hsl(220 15% 4% / 0.15);
+  }
+  
+  /* Back Button - Outlined Style */
+  .wizard-footer > button:first-child {
+    background: transparent !important;
+    border: 2px solid hsl(var(--border)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+  
+  .wizard-footer > button:first-child:active {
+    background: hsl(var(--secondary)) !important;
+    transform: scale(0.97);
+  }
+  
+  /* Next Button - Primary Style */
+  .wizard-footer > button:last-child {
+    background: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    border: 2px solid hsl(var(--primary)) !important;
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.3) !important;
+  }
+  
+  .wizard-footer > button:last-child:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.4) !important;
+  }
+
+  /* Input Fields - Native Mobile Feel */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="url"],
+  textarea,
+  select {
+    width: 100%;
+    min-height: 52px;
+    font-size: 1.0625rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.75rem;
+    border-width: 2px;
+    transition: all 0.2s ease;
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: hsl(var(--primary)) !important;
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+    outline: none;
+  }
+
+  /* Select Triggers - Full Width */
+  [role="combobox"] {
+    width: 100% !important;
+    min-height: 48px;
+  }
+
+  /* Wizard Steps - Full Width with Better Spacing */
+  [class*="wizard"],
+  [class*="step"] {
+    width: 100%;
+  }
+  
+  .space-y-6 {
+    gap: 1.25rem !important;
+  }
+
+  /* Radio Groups - Native Mobile Feel with Better Spacing */
+  [role="radiogroup"] {
+    gap: 0.875rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  [role="radiogroup"] > div {
+    width: 100%;
+    margin-bottom: 0;
+    padding: 1.25rem 1.125rem !important;
+    min-height: 64px;
+    display: flex;
+    align-items: flex-start;
+    border-radius: 0.875rem !important;
+    border-width: 2px !important;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: hsl(var(--card)) !important;
+  }
+  
+  [role="radiogroup"] > div:active {
+    transform: scale(0.98);
+    background: hsl(var(--secondary) / 0.8) !important;
+  }
+  
+  [role="radiogroup"] > div:has([data-state="checked"]) {
+    border-color: hsl(var(--primary)) !important;
+    background: hsl(var(--primary) / 0.1) !important;
+    box-shadow: 0 2px 10px hsl(var(--primary) / 0.2);
+  }
+  
+  [role="radiogroup"] button[role="radio"] {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    border-width: 2px;
+  }
+  
+  [role="radiogroup"] button[role="radio"][data-state="checked"]::after {
+    width: 14px;
+    height: 14px;
+  }
+  
+  [role="radiogroup"] label {
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 600;
+    margin-left: 0.875rem;
+    flex: 1;
+    padding-top: 0.125rem;
+  }
+
+  /* Step Indicator - Optimized for Mobile Wizard */
+  .flex.items-center.justify-between.mb-8 {
+    gap: 0.125rem !important;
+    margin-bottom: 1.5rem !important;
+    padding: 0.875rem 0.5rem !important;
+    background: hsl(var(--card)) !important;
+    border-radius: 0.875rem !important;
+    border: 1px solid hsl(var(--border)) !important;
+    box-shadow: 0 2px 8px hsl(220 15% 4% / 0.08);
+  }
+  
+  .flex.items-center.justify-between.mb-8 > div {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Step circles - Compact but tappable */
+  .flex.items-center.justify-between.mb-8 .w-10.h-10 {
+    width: 2rem !important;
+    height: 2rem !important;
+    font-size: 0.8125rem !important;
+    font-weight: 700 !important;
+    border-width: 2px !important;
+    box-shadow: 0 1px 4px hsl(220 15% 4% / 0.12);
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+  }
+  
+  /* Inactive step - Subtle */
+  .flex.items-center.justify-between.mb-8 .bg-secondary {
+    background: hsl(var(--secondary)) !important;
+    border-color: hsl(var(--border)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  /* Active step - Prominent with clear highlight */
+  .flex.items-center.justify-between.mb-8 .bg-primary\/20 {
+    background: hsl(var(--primary) / 0.15) !important;
+    border-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary)) !important;
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1),
+                0 2px 6px hsl(var(--primary) / 0.25);
+  }
+  
+  /* Completed step - Solid with subtle glow */
+  .flex.items-center.justify-between.mb-8 .bg-primary {
+    background: hsl(var(--primary)) !important;
+    border-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1),
+                0 2px 8px hsl(var(--primary) / 0.3);
+  }
+  
+  /* Step labels - HIDE ALL on mobile (numbers only) */
+  .flex.items-center.justify-between.mb-8 .text-xs.mt-2 {
+    display: none !important; /* Completely hide all step labels */
+  }
+  
+  /* Connecting lines - Thinner on mobile */
+  .flex.items-center.justify-between.mb-8 .h-0\.5 {
+    height: 1.5px !important;
+    margin-left: 0.125rem !important;
+    margin-right: 0.125rem !important;
+    border-radius: 1px !important;
+    transition: all 0.3s ease;
+  }
+  
+  /* Completed connecting line */
+  .flex.items-center.justify-between.mb-8 .bg-primary.h-0\.5 {
+    box-shadow: 0 1px 2px hsl(var(--primary) / 0.25);
+  }
+
+  /* File Lists - Full Width with Large Touch Targets */
+  [data-tutorial="repositories"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Repository Cards - Better Mobile Layout */
+  [class*="repository-card"],
+  [class*="RepositoryCard"] {
+    padding: 1rem;
+  }
+
+  /* Form Sections - Stack Vertically */
+  .space-y-4 > .grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  /* Increase Base Font Size */
+  body {
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: 1.875rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  /* Better Touch Targets for Icons and Small Buttons */
+  [class*="icon"] {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Dropdown Menus - Full Width & Proper Background */
+  [role="menu"],
+  [role="listbox"] {
+    width: 100% !important;
+    min-width: 200px !important;
+  }
+
+  /* Dialog/Modal - Better Mobile Display */
+  [role="dialog"] {
+    max-width: calc(100vw - 2rem) !important;
+    margin: 1rem !important;
+    max-height: calc(100vh - 2rem) !important;
+  }
+
+  /* Tabs - Scrollable on Mobile */
+  [role="tablist"] {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  [role="tab"] {
+    min-width: auto;
+    padding: 0.5rem 1rem;
+  }
+
+  /* Better Padding for Main Content */
+  main {
+    padding-top: 1rem !important;
+    padding-bottom: 5.5rem !important; /* Space for fixed buttons */
+  }
+  
+  /* Main container - Native App Feel */
+  main > div[class*="max-w"] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Welcome Section - Centered and Prominent */
+  .text-3xl {
+    font-size: 1.625rem !important;
+    line-height: 1.25;
+    font-weight: 700;
+    text-align: center;
+    padding: 0.5rem 0;
+  }
+  
+  /* Subtitle text - Centered */
+  .text-muted-foreground:not([class*="CardDescription"]) {
+    text-align: center;
+    padding-bottom: 0.75rem;
+  }
+  
+  /* Space adjustments for native feel */
+  .space-y-6 > * + * {
+    margin-top: 1.5rem !important;
+  }
+  
+  .space-y-4 > * + * {
+    margin-top: 1rem !important;
+  }
+  
+  .space-y-2 > * + * {
+    margin-top: 0.625rem !important;
+  }
+
+  /* Sync Page - Stack Source/Destination Vertically */
+  .space-y-6 > .space-y-4 .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Pull Request Form - Stack Branches Vertically */
+  .grid.grid-cols-2.gap-4 {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Labels - Native Mobile Feel */
+  label {
+    font-size: 0.9375rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+  
+  /* Validation Messages - Better Visibility */
+  .text-sm {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+  
+  /* Success/Error States */
+  .text-green-500,
+  [class*="text-green"] {
+    font-weight: 600;
+  }
+  
+  .text-destructive,
+  [class*="text-red"] {
+    font-weight: 600;
+  }
+  
+  /* File Upload Areas - Full Width */
+  input[type="file"] {
+    width: 100%;
+    padding: 0.75rem;
+  }
+  
+  /* Description Text - Better Mobile Readability */
+  [class*="CardDescription"],
+  .text-muted-foreground {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  
+  /* ========== WIZARD-SPECIFIC FIXES ========== */
+  
+  /* Wizard Card Titles - Better Wrapping & Centering */
+  .space-y-6 > div > h3,
+  [class*="wizard"] h3,
+  .text-2xl {
+    font-size: 1.375rem !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+    padding: 0.5rem 0.75rem !important;
+    word-wrap: break-word !important;
+    hyphens: auto !important;
+  }
+  
+  /* ========== GITHUB PAGES MOBILE NATIVE UI ========== */
+  
+  /* GitHub Pages Tabs - Horizontal with Native Feel */
+  .max-w-md [role="tablist"] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    width: 100% !important;
+    gap: 0.5rem !important;
+    padding: 0.25rem !important;
+    background: hsl(var(--muted) / 0.5) !important;
+    border-radius: 0.75rem !important;
+  }
+  
+  .max-w-md [role="tab"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 44px !important;
+    font-size: 0.9375rem !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1rem !important;
+    gap: 0.375rem !important;
+    border-radius: 0.625rem !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .max-w-md [role="tab"][data-state="active"] {
+    background: hsl(var(--background)) !important;
+    box-shadow: 0 2px 8px hsl(var(--foreground) / 0.1) !important;
+  }
+  
+  /* GitHub Pages - Step Indicator Enhancement */
+  .max-w-6xl .space-y-6 > div:first-child {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* GitHub Pages Wizard Card - Native App Feel */
+  .max-w-6xl > div > div > div:has([class*="Step"]) {
+    border-radius: 1.25rem !important;
+    overflow: hidden !important;
+    border: none !important;
+    box-shadow: 0 4px 16px hsl(var(--foreground) / 0.08) !important;
+  }
+  
+  /* Wizard Steps - Better Spacing */
+  [class*="WizardStep"] > div {
+    padding: 0.5rem 0 !important;
+  }
+  
+  /* Form Labels - Native Style */
+  .space-y-4 > div > label.text-base,
+  .space-y-6 > div > label.text-base {
+    font-size: 0.8125rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: hsl(var(--muted-foreground)) !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  /* Form Descriptions - Better Readability */
+  .space-y-4 p.text-sm,
+  .space-y-6 p.text-sm {
+    font-size: 0.9375rem !important;
+    line-height: 1.5 !important;
+    margin-bottom: 0.75rem !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  /* Select Dropdowns - Larger Touch Targets */
+  [role="combobox"],
+  .h-11 {
+    min-height: 52px !important;
+    font-size: 1rem !important;
+    border-radius: 0.75rem !important;
+    border: 2px solid hsl(var(--border)) !important;
+    background: hsl(var(--background)) !important;
+    font-weight: 500 !important;
+  }
+  
+  /* Radio Groups - Native Look */
+  [class*="RadioGroup"] > div {
+    min-height: 60px !important;
+    border-radius: 0.875rem !important;
+    border: 2px solid hsl(var(--border)) !important;
+    padding: 1rem !important;
+    margin-bottom: 0.75rem !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  [class*="RadioGroup"] > div:has([data-state="checked"]) {
+    border-color: hsl(var(--primary)) !important;
+    background: hsl(var(--primary) / 0.05) !important;
+  }
+  
+  /* Summary Section - Native Card Style */
+  .bg-muted\/50 {
+    background: hsl(var(--muted) / 0.3) !important;
+    border-radius: 1rem !important;
+    padding: 1.25rem !important;
+    border: 1px solid hsl(var(--border)) !important;
+  }
+  
+  .bg-muted\/50 h3 {
+    font-size: 1.125rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .bg-muted\/50 .space-y-3 > div {
+    padding: 0.875rem 0 !important;
+    border-bottom: 1px solid hsl(var(--border) / 0.5) !important;
+  }
+  
+  .bg-muted\/50 .space-y-3 > div:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+  }
+  
+  /* Navigation Buttons - Fixed Bottom on Mobile */
+  .space-y-6 > .flex.gap-3 {
+    position: fixed !important;
+    bottom: 72px !important;
+    left: 0 !important;
+    right: 0 !important;
+    padding: 1rem !important;
+    background: hsl(var(--background)) !important;
+    border-top: 1px solid hsl(var(--border)) !important;
+    z-index: 40 !important;
+    gap: 0.75rem !important;
+    box-shadow: 0 -2px 12px hsl(var(--foreground) / 0.08) !important;
+  }
+  
+  .space-y-6 > .flex.gap-3 button {
+    flex: 1 !important;
+    min-height: 52px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    border-radius: 0.875rem !important;
+  }
+  
+  /* Add padding to bottom of content to prevent overlap with fixed buttons */
+  .max-w-6xl .space-y-6 > div:has([class*="CardContent"]) {
+    padding-bottom: 6rem !important;
+  }
+  
+  /* Success/Status Messages - Native Style */
+  .bg-primary\/10 {
+    background: hsl(var(--primary) / 0.08) !important;
+    border-radius: 1rem !important;
+    padding: 1.25rem !important;
+    border: 2px solid hsl(var(--primary) / 0.2) !important;
+  }
+  
+  /* Enable Button - Prominent */
+  button:has([class*="Rocket"]) {
+    min-height: 56px !important;
+    font-size: 1.0625rem !important;
+    font-weight: 700 !important;
+    border-radius: 0.875rem !important;
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.3) !important;
+  }
+  
+  /* Loading States - Better Visibility */
+  .animate-spin {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  
+  /* Wizard Step 4 - Review & Confirm - Stack Vertically */
+  .space-y-4 > div > div,
+  [class*="review"] > div {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    margin-bottom: 1rem !important;
+    padding: 0.75rem !important;
+    border-bottom: 1px solid hsl(var(--border)) !important;
+  }
+  
+  .space-y-4 > div > div > span:first-child,
+  .font-semibold {
+    display: block !important;
+    margin-bottom: 0.375rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 700 !important;
+    color: hsl(var(--muted-foreground)) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+  }
+  
+  .space-y-4 > div > div > span:last-child {
+    display: block !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: hsl(var(--foreground)) !important;
+    word-wrap: break-word !important;
+  }
+  
+  /* ========== REPOSITORIES LIST PAGE FIXES ========== */
+  
+  /* Search Bar - Full Width */
+  [data-tutorial="search"] input,
+  input[placeholder*="Search repositories"] {
+    width: 100% !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  /* Filter Dropdowns - Side by Side Below Search */
+  .flex.gap-2:has([role="combobox"]),
+  .flex.items-center.gap-2:has(select) {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+    margin-top: 0.75rem !important;
+  }
+  
+  /* ========== FILE BROWSER FIXES ========== */
+  
+  /* File List Items - Correct Mobile Order */
+  .file-browser-item {
+    display: grid !important;
+    grid-template-columns: auto auto 1fr auto !important;
+    gap: 0.75rem !important;
+    align-items: center !important;
+  }
+  
+  .file-browser-item > *:nth-child(1) {
+    /* Checkbox */
+    order: 1;
+  }
+  
+  .file-browser-item > *:nth-child(2) {
+    /* Icon */
+    order: 2;
+  }
+  
+  .file-browser-item > *:nth-child(3) {
+    /* Name and content */
+    order: 3;
+  }
+  
+  .file-browser-item > *:nth-child(4) {
+    /* Three-dot menu */
+    order: 4;
+  }
+  
+  /* Make menu button always visible and tappable on mobile */
+  .file-browser-item button[title="More actions"] {
+    opacity: 1 !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+  
+  /* File Editor Modal - Full Screen on Mobile */
+  [role="dialog"]:has(#commit-message) {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+  
+  [role="dialog"]:has(#commit-message) .w-full {
+    min-height: 50vh !important;
+  }
+  
+  /* ========== SYNC REPOSITORIES PAGE FIXES ========== */
+  
+  /* Sync Page - Stack Source/Destination Vertically */
+  .grid.grid-cols-2.gap-6,
+  .grid.grid-cols-2.gap-4:has([class*="source"], [class*="destination"]) {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+  
+  /* Source/Destination Sections - Stack Dropdowns Vertically */
+  .space-y-4 .grid.grid-cols-2,
+  .space-y-4 > div:has(select, [role="combobox"]) {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+  
+  /* Sync Button - Full Width */
+  button:has-text("Initiate Sync"),
+  .space-y-6 > button:last-child {
+    width: 100% !important;
+    margin-top: 1.5rem !important;
+  }
+  
+  /* ========== WELCOME TEXT CENTERING ========== */
+  
+  /* Center Welcome Text & Wizard Title */
+  .text-lg,
+  p:has-text("Welcome"),
+  h2:has-text("Guided Push Wizard") {
+    text-align: center !important;
+    padding: 0.5rem 1rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+}
