@@ -6,6 +6,33 @@ import { cn } from "@/lib/utils";
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const;
 
+/**
+ * Validates and sanitizes color values to prevent CSS injection
+ * Allows: hex colors, hsl(), rgb(), rgba(), CSS variables, and named colors
+ * @param color - The color value to validate
+ * @returns true if the color is safe to use
+ */
+const isValidColor = (color: string): boolean => {
+  if (!color || typeof color !== 'string') return false;
+  
+  const trimmedColor = color.trim();
+  
+  // Allow hex colors (#fff, #ffffff, #ffffffff)
+  if (/^#[0-9A-Fa-f]{3,8}$/.test(trimmedColor)) return true;
+  
+  // Allow hsl/hsla
+  if (/^hsla?\(\s*[\d.]+\s*,\s*[\d.]+%\s*,\s*[\d.]+%\s*(,\s*[\d.]+\s*)?\)$/.test(trimmedColor)) return true;
+  
+  // Allow rgb/rgba
+  if (/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*(,\s*[\d.]+\s*)?\)$/.test(trimmedColor)) return true;
+  
+  // Allow CSS variables (e.g., var(--color-name))
+  if (/^var\(--[\w-]+\)$/.test(trimmedColor)) return true;
+  
+  // Reject any other patterns (prevents injection)
+  return false;
+};
+
 export type ChartConfig = {
   [k in string]: {
     label?: React.ReactNode;
@@ -75,8 +102,10 @@ ${prefix} [data-chart=${id}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
     const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
-    return color ? `  --color-${key}: ${color};` : null;
+    // Security: validate color values to prevent CSS injection
+    return color && isValidColor(color) ? `  --color-${key}: ${color};` : null;
   })
+  .filter(Boolean)
   .join("\n")}
 }
 `,

@@ -1,6 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
 import { sanitizeGitHubError } from '../_shared/error-sanitizer.ts';
+import { checkRateLimit, getRateLimitHeaders } from '../_shared/rate-limiter.ts';
 import { ownerField, repoField } from '../_shared/validation.ts';
 
 const corsHeaders = {
@@ -50,6 +51,22 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Rate limiting: 10 requests per minute for critical operations
+    const rateLimitResult = checkRateLimit(user.id, { maxRequests: 10, windowMs: 60000 });
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+        { 
+          status: 429, 
+          headers: { 
+            ...corsHeaders, 
+            ...getRateLimitHeaders(rateLimitResult),
+            'Content-Type': 'application/json' 
+          } 
+        }
       );
     }
 
