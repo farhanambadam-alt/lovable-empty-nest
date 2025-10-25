@@ -34,7 +34,8 @@ const RepositoryManager = () => {
   const [owner, setOwner] = useState("");
   const [repo, setRepo] = useState("");
   const [username, setUsername] = useState<string | null>(null);
-  const [currentBranch, setCurrentBranch] = useState("main");
+  const [currentBranch, setCurrentBranch] = useState<string>("");
+  const [defaultBranch, setDefaultBranch] = useState<string>("");
   const [currentPath, setCurrentPath] = useState("");
   const [files, setFiles] = useState<FileItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,7 +75,13 @@ const RepositoryManager = () => {
   }, [repoName, navigate]);
 
   useEffect(() => {
-    if (owner && repo) {
+    if (owner && repo && !defaultBranch) {
+      fetchRepoMetadata();
+    }
+  }, [owner, repo]);
+
+  useEffect(() => {
+    if (owner && repo && currentBranch) {
       fetchContents();
     }
   }, [owner, repo, currentBranch, currentPath]);
@@ -88,6 +95,33 @@ const RepositoryManager = () => {
 
     if (data) {
       setUsername(data.github_username);
+    }
+  };
+
+  const fetchRepoMetadata = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const { data, error } = await supabase.functions.invoke('get-repo-contents', {
+        body: { 
+          owner, 
+          repo,
+          provider_token: session?.provider_token,
+        }
+      });
+
+      if (!error && data?.default_branch) {
+        setDefaultBranch(data.default_branch);
+        setCurrentBranch(data.default_branch);
+      } else {
+        // Fallback to 'main' if we can't fetch metadata
+        setDefaultBranch('main');
+        setCurrentBranch('main');
+      }
+    } catch (err) {
+      console.error('Error fetching repo metadata:', err);
+      // Fallback to 'main'
+      setDefaultBranch('main');
+      setCurrentBranch('main');
     }
   };
 

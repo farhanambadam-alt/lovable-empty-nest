@@ -378,9 +378,9 @@ export function FileBrowser({
         </div>
       </div>
 
-      {/* Mobile Actions Drawer */}
+      {/* Mobile Actions Drawer - Fixed to bottom */}
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent className="bg-[hsl(var(--github-gray-0))] border-t border-border/50">
+        <DrawerContent className="bg-[hsl(var(--github-gray-0))] border-t border-border/50 fixed bottom-0 left-0 right-0 z-50">
           <DrawerHeader className="text-left pb-2">
             <DrawerTitle className="text-lg font-semibold text-foreground/90 flex items-center gap-2">
               {selectedFile?.type === 'dir' ? (
