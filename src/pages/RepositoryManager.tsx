@@ -101,24 +101,60 @@ const RepositoryManager = () => {
   const fetchRepoMetadata = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.provider_token) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in again to access your repositories.",
+          variant: "destructive",
+        });
+        navigate("/auth");
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('get-repo-contents', {
         body: { 
           owner, 
           repo,
-          provider_token: session?.provider_token,
+          path: '',
+          provider_token: session.provider_token,
         }
       });
 
-      if (!error && data?.default_branch) {
+      if (error) {
+        console.error('Error fetching repo metadata:', error);
+        const { getHumanFriendlyError, extractErrorStatus } = await import('@/lib/error-messages');
+        const friendlyError = getHumanFriendlyError({
+          status: extractErrorStatus(error),
+          operation: 'fetch'
+        });
+        toast({
+          title: friendlyError.title,
+          description: friendlyError.description,
+          variant: "destructive",
+        });
+        // Fallback to 'main' on error
+        setDefaultBranch('main');
+        setCurrentBranch('main');
+        return;
+      }
+
+      if (data?.default_branch) {
+        console.log('Setting default branch to:', data.default_branch);
         setDefaultBranch(data.default_branch);
         setCurrentBranch(data.default_branch);
       } else {
-        // Fallback to 'main' if we can't fetch metadata
+        console.warn('No default branch in response, falling back to main');
         setDefaultBranch('main');
         setCurrentBranch('main');
       }
     } catch (err) {
-      console.error('Error fetching repo metadata:', err);
+      console.error('Exception fetching repo metadata:', err);
+      toast({
+        title: "Failed to load repository",
+        description: "Could not fetch repository information. Please try again.",
+        variant: "destructive",
+      });
       // Fallback to 'main'
       setDefaultBranch('main');
       setCurrentBranch('main');
@@ -126,20 +162,33 @@ const RepositoryManager = () => {
   };
 
   const fetchContents = async (forceFresh = false) => {
+    if (!currentBranch) {
+      console.log('Skipping fetchContents - no branch selected yet');
+      return;
+    }
+    
     setIsLoading(true);
     try {
-      // Add cache-busting parameter to force fresh data
-      const cacheBuster = forceFresh ? `&_t=${Date.now()}` : '';
-      
       const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.provider_token) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in again to access your repositories.",
+          variant: "destructive",
+        });
+        navigate("/auth");
+        setIsLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('get-repo-contents', {
         body: { 
           owner, 
           repo, 
           path: currentPath, 
           ref: currentBranch,
-          cacheBuster, // This will be ignored by the function but helps bust browser cache
-          provider_token: session?.provider_token,
+          provider_token: session.provider_token,
         }
       });
 

@@ -77,9 +77,35 @@ Deno.serve(async (req) => {
       );
     }
 
-    const url = ref 
-      ? `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${ref}`
-      : `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    // First, fetch repository metadata to get default branch
+    console.log(`Fetching repository metadata for: ${owner}/${repo}`);
+    const repoResponse = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${provider_token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'RepoPush',
+        },
+      }
+    );
+
+    if (!repoResponse.ok) {
+      const rawError = await repoResponse.text();
+      const sanitized = sanitizeGitHubError(repoResponse.status, rawError);
+      return new Response(
+        JSON.stringify({ error: sanitized.message }),
+        { status: sanitized.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const repoMetadata = await repoResponse.json();
+    const defaultBranch = repoMetadata.default_branch;
+    console.log(`Repository default branch: ${defaultBranch}`);
+
+    // Use the provided ref or fall back to default branch
+    const effectiveRef = ref || defaultBranch;
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${effectiveRef}`;
     console.log('Fetching contents from:', url);
 
     const githubResponse = await fetch(url, {
@@ -103,7 +129,16 @@ Deno.serve(async (req) => {
     console.log('Successfully fetched contents');
 
     return new Response(
-      JSON.stringify({ contents }),
+      JSON.stringify({ 
+        contents,
+        default_branch: defaultBranch,
+        repository: {
+          name: repoMetadata.name,
+          full_name: repoMetadata.full_name,
+          private: repoMetadata.private,
+          default_branch: defaultBranch
+        }
+      }),
       { 
         headers: { 
           ...corsHeaders, 
