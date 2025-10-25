@@ -345,7 +345,7 @@ export const RepositorySettingsDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-0">
-        <DialogHeader className="px-4 sm:px-6 pt-6 pb-4 border-b">
+        <DialogHeader className="px-4 sm:px-6 pt-6 pb-4 border-b flex-shrink-0">
           <DialogTitle className="text-xl">Repository Settings</DialogTitle>
           <DialogDescription>
             Update settings for {repo?.name}
@@ -353,7 +353,7 @@ export const RepositorySettingsDialog = ({
         </DialogHeader>
         
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
-          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-4">
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 pb-24 md:pb-6 space-y-4">
             
             {/* Basic Information Section */}
             <section className="space-y-3 p-3 sm:p-4 rounded-lg border bg-card">
@@ -639,13 +639,13 @@ export const RepositorySettingsDialog = ({
             </section>
           </div>
 
-          {/* Sticky Footer */}
-          <DialogFooter className="flex-shrink-0 px-4 sm:px-6 py-3 sm:py-4 border-t bg-background sticky bottom-0 z-10">
-            <div className="flex flex-col-reverse sm:flex-row gap-2 w-full sm:justify-end">
+          {/* Footer - Fixed on mobile, sticky on desktop */}
+          <DialogFooter className="flex-shrink-0 px-4 sm:px-6 py-4 border-t bg-background/95 backdrop-blur-sm fixed md:sticky bottom-0 left-0 right-0 z-20 md:relative">
+            <div className="flex flex-row gap-3 w-full justify-end">
               <Button 
                 type="button" 
                 variant="outline" 
-                className="w-full sm:w-auto min-h-[48px]"
+                className="flex-1 sm:flex-none sm:w-auto min-h-[48px]"
                 onClick={() => onOpenChange(false)}
               >
                 Cancel
@@ -653,7 +653,7 @@ export const RepositorySettingsDialog = ({
               <Button 
                 type="submit" 
                 disabled={isSaving}
-                className="w-full sm:w-auto min-h-[48px] font-semibold"
+                className="flex-1 sm:flex-none sm:w-auto min-h-[48px] font-semibold"
               >
                 {isSaving ? "Saving..." : "Save Changes"}
               </Button>
